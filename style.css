@@ -13,12 +13,62 @@
 }
 
 .login-page {
-  max-width: 400px;
-  padding: 10px;
-  left: 60%;
+  max-width: 300px;
+  padding: 16px;
+  left: 77%;
   right: 0;
+  top: 95px;
   position: absolute;
   text-align: center;
+  border: 1px solid #e9e9e9;
+  background-color: #fff;
+  z-index: 1;
+  border-radius: 10px;
+  display: none;
+}
+
+.logout-page {
+  max-width: 100px;
+  padding: 12px;
+  left: 90%;
+  right: 0;
+  top: 60px;
+  position: absolute;
+  text-align: center;
+  border: 1px solid #e9e9e9;
+  background-color: #fff;
+  z-index: 1;
+  border-radius: 10px;
+  display: none;
+}
+
+.label-logout {
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.label-login {
+  font-size: 20px;
+}
+
+.form-group {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.form-control {
+  width: 80%;
+}
+
+.btn-login {
+  width: 86%;
+  background-color: #0D4ADA;
+  color: #e9e9e9;
+  padding: 4px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  height: 30px;
 }
 
 .text-logo {
@@ -26,10 +76,34 @@
   color: #0D4ADA;
 }
 
+.dont-any-account {
+  font-size: 14px;
+  margin-top: 14px;
+}
+
 .search-input {
   border: 1px solid #0D4ADA;
   padding: 10px;
   border-radius: 10px;
+  margin-right: 10px;
+}
+
+.custom-icon-login {
+  font-size: 20px;
+  color: #848484;
+  margin-right: 10px;
+}
+
+.wrapper-navbar-left {
+  margin-right: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-icon-login:hover+.login-page {
+  display: block;
 }
 
 .search-input:focus {
@@ -138,4 +212,49 @@
 
 .btn:hover {
   background-color: #0056b3;
+}
+
+/* Tabel Style */
+.table-container {
+  width: 80%;
+  margin: 32px auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+}
+
+/* Tombol Aksi Style */
+.edit-btn,
+.delete-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.edit-btn:hover,
+.delete-btn:hover {
+  color: #555;
+}
+
+.edit-btn i,
+.delete-btn i {
+  font-size: 16px;
+}
+
+.edit-btn {
+  color: blue;
+  margin-right: 5px;
+}
+
+.delete-btn {
+  color: red;
 }

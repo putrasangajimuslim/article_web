@@ -6,24 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
 </head>
 
 <body>
     <div class="navbar">
         <span class="text-logo">BLOGSPOT</span>
 
-        <div>
+        <div class="wrapper-navbar-left">
             <input type="text" placeholder="search.." class="search-input">
+            <i class="fas fa-user custom-icon-login" onmouseover="showLoginPage()" ondblclick="hideLoginPage()"></i>
         </div>
     </div>
 
-    <div class="login-page">
-        <div>Login</div>
+    <div class="login-page" id="loginPage">
+        <div class="label-login">Login</div>
         <div class="form-group">
             <input type="text" placeholder="Username" class="form-control">
         </div>
         <div class="form-group">
             <input type="password" placeholder="Password" class="form-control">
+        </div>
+        <button class="btn-login">MASUK</button>
+        <div class="dont-any-account">
+            Belum Punya Akun? <a href="register.php" class="daftar">Daftar</a>
         </div>
     </div>
 
@@ -99,6 +105,18 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function showLoginPage() {
+            var loginPage = document.getElementById("loginPage");
+            loginPage.style.display = "block";
+        }
+
+        function hideLoginPage() {
+            var loginPage = document.getElementById("loginPage");
+            loginPage.style.display = "none";
+        }
+    </script>
 </body>
 
 </html>
