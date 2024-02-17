@@ -1,17 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="navbar">
         <span class="text-logo">BLOGSPOT</span>
 
         <div>
             <input type="text" placeholder="search.." class="search-input">
+        </div>
+    </div>
+
+    <div class="login-page">
+        <div>Login</div>
+        <div class="form-group">
+            <input type="text" placeholder="Username" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="password" placeholder="Password" class="form-control">
         </div>
     </div>
 
@@ -88,4 +100,5 @@
         </div>
     </div>
 </body>
+
 </html>
