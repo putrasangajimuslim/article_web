@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,22 +19,51 @@
         <div class="wrapper-navbar-left">
             <input type="text" placeholder="search.." class="search-input">
             <i class="fas fa-user custom-icon-login" onmouseover="showLoginPage()" onclick="showLoginPage()" ondblclick="hideLoginPage()"></i>
+            <?php
+            if (isset($_SESSION['user'])) {
+            ?>
+                <div class="label-admin">
+                    <?php echo $_SESSION['user']['username'] ?>
+                </div>
+            <?php
+            }
+            ?>
         </div>
     </div>
 
-    <div class="login-page" id="loginPage">
-        <div class="label-login">Login</div>
-        <div class="form-group">
-            <input type="text" placeholder="Username" class="form-control">
+    <?php
+    if (!isset($_SESSION['user'])) {
+    ?>
+        <div class="login-page" id="loginPage">
+            <div class="label-login">Login</div>
+            <form action="login_aksi.php" method="post">
+                <div class="form-group">
+                    <input type="text" placeholder="Username" name="username" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Password" name="password" class="form-control">
+                </div>
+                <button class="btn-login">MASUK</button>
+                <div class="dont-any-account">
+                    Belum Punya Akun? <a href="register.php" class="daftar">Daftar</a>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            <input type="password" placeholder="Password" class="form-control">
+    <?php
+    }
+    ?>
+
+    <?php
+    if (isset($_SESSION['user'])) {
+    ?>
+        <div class="logout-page" id="loginPage">
+            <a href="logout.php" class="label-logout">
+                Logout
+            </a>
         </div>
-        <button class="btn-login">MASUK</button>
-        <div class="dont-any-account">
-            Belum Punya Akun? <a href="register.php" class="daftar">Daftar</a>
-        </div>
-    </div>
+    <?php
+    }
+    ?>
 
     <div class="content-wrapper">
         <div class="d-flex-space-between">

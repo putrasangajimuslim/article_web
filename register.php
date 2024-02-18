@@ -8,6 +8,7 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -104,7 +105,7 @@ session_start();
 
 <body>
     <div class="container">
-        <a href="index.php" class="btn-back">Back</a>
+        <button onclick="backButton()" class="btn-back">Back</button>
 
         <?php
         if (isset($_SESSION['error'])) {
@@ -159,6 +160,23 @@ session_start();
             <button type="submit" class="btn-register">Register</button>
         </form>
     </div>
+    <script>
+        window.onbeforeunload = function() {
+            alert('test');
+        };
+
+        function backButton() {
+            $.ajax({
+                url: "hapus_session_alert.php",
+                type: 'GET',
+                success: function(res) {
+                    if (res == 'success') {
+                        window.location.href = "index.php";
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>

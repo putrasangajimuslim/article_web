@@ -1,3 +1,16 @@
+<?php
+session_start();
+if (isset($_SESSION['user'])) {
+    $role = $_SESSION['user']['role'];
+    if ($role != 'admin') {
+        header("Location: index.php"); // Misalnya, alihkan ke halaman login
+        exit;
+    }
+} else {
+    header("Location: index.php"); // Misalnya, alihkan ke halaman login
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,15 +28,30 @@
 
         <div class="wrapper-navbar-left">
             <i class="fas fa-user custom-icon-login" onclick="showLoginPage()" onmouseover="showLoginPage()" ondblclick="hideLoginPage()"></i>
-            <!-- <div class="label-admin">
-                Admin
-            </div> -->
+
+            <?php
+            if (isset($_SESSION['user'])) {
+            ?>
+                <div class="label-admin">
+                    <?php echo $_SESSION['user']['username'] ?>
+                </div>
+            <?php
+            }
+            ?>
         </div>
     </div>
 
-    <div class="logout-page" id="loginPage">
-        <div class="label-logout">Logout</div>
-    </div>
+    <?php
+    if (isset($_SESSION['user'])) {
+    ?>
+        <div class="logout-page" id="loginPage">
+            <a href="logout.php" class="label-logout">
+                Logout
+            </a>
+        </div>
+    <?php
+    }
+    ?>
 
     <div class="table-container">
         <table>

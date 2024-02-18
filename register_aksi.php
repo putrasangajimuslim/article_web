@@ -2,6 +2,7 @@
 require_once("config.php");
 session_start();
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validasi jika password & password_confirmation sama
     if ($_POST['password'] != $_POST['password_confirmation']) {
@@ -10,32 +11,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Check apakah user dengan username tersebut sudah ada di tabel users
-    $query = "SELECT * FROM users WHERE username = ? LIMIT 1";
-    $stmt = $mysqli->prepare($query);
-    $stmt->bind_param('s', $_POST['username']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
+    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
 
-    // Jika username sudah ada, kembalikan ke halaman register
-    if ($row) {
-        $_SESSION['error'] = 'Username: ' . $_POST['username'] . ' sudah ada di database.';
+    $sql_check = "SELECT COUNT(*) AS count FROM users WHERE username = :username OR email = :email";
+    $stmt_check = $db->prepare($sql_check);
+    $stmt_check->bindParam(':username', $_POST["username"]);
+    $stmt_check->bindParam(':email', $_POST['email']);
+    $stmt_check->execute();
+    $result = $stmt_check->fetch(PDO::FETCH_ASSOC);
+
+    if ($result['count'] > 0) {
+        // Jika username atau email sudah ada, kembalikan pesan kesalahan
+        $_SESSION['error'] = "Username atau email sudah ada dalam sistem";
+        // Redirect ke halaman lain atau lakukan tindakan yang sesuai
         header("Location: register.php");
-        exit();
+        exit; // Pastikan untuk menghentikan eksekusi skrip setelah redirect
     } else {
-        // Hash password
-        $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $sql = "INSERT INTO users (username, nama_depan, nama_belakang, birthday, email, role, password) 
+                VALUES (:username, :nama_depan, :nama_belakang, :birthday, :email, :role, :password)";
+        $stmt = $db->prepare($sql);
 
-        // Simpan data pengguna ke dalam database
-        $insert_query = "INSERT INTO users (username, nama_depan, nama_belakang, birthday, email, role, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $mysqli->prepare($insert_query);
-        $stmt->bind_param('sssssss', $_POST['username'], $_POST['nama_dpn'], $_POST['nama_belakang'], $_POST['birthday'], $_POST['email'], 'user', $hashed_password); // Perbaikan disini, melewatkan nilai langsung, bukan referensi
-        $stmt->execute();
+        $params = array(
+            ":username" => $_POST["username"],
+            ":nama_depan" => $_POST["nama_dpn"],
+            ":nama_belakang" => $_POST["nama_belakang"],
+            ":email" => $_POST['email'],
+            ":birthday" => $_POST['birthday'],
+            ":role" => 'user',
+            ":password" => $password
+        );
 
-        // Set pesan sukses dan kembalikan ke halaman register
-        $_SESSION['message'] = 'Berhasil register ke dalam sistem. Silakan login dengan username dan password yang sudah dibuat.';
-        header("Location: register.php");
-        exit();
+        // eksekusi query untuk menyimpan ke database
+        $saved = $stmt->execute($params);
+
+        // jika query simpan berhasil, maka user sudah terdaftar
+        // maka alihkan ke halaman login
+        if ($saved) $_SESSION['message'] = "Berhasil Register";
+        if ($saved) header("Location: register.php");
     }
 }
