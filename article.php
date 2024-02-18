@@ -14,7 +14,7 @@
         <span class="text-logo">Admin Panel</span>
 
         <div class="wrapper-navbar-left">
-            <i class="fas fa-user custom-icon-login" onmouseover="showLoginPage()" ondblclick="hideLoginPage()"></i>
+            <i class="fas fa-user custom-icon-login" onclick="showLoginPage()" onmouseover="showLoginPage()" ondblclick="hideLoginPage()"></i>
             <!-- <div class="label-admin">
                 Admin
             </div> -->

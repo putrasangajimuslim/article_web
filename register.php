@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -44,7 +47,8 @@
 
         input[type="text"],
         input[type="email"],
-        input[type="password"] {
+        input[type="password"],
+        input[type="date"] {
             width: 100%;
             height: 35px;
             border: 1px solid #ccc;
@@ -79,6 +83,22 @@
             cursor: pointer;
             text-decoration: none;
         }
+
+        .alert-warning {
+            padding: 10px;
+            background-color: #F8D7DA;
+            margin-top: 17px;
+            color: #9D2E24;
+            border-radius: 10px;
+        }
+
+        .alert-success {
+            padding: 10px;
+            background-color: #D4EDDA;
+            margin-top: 17px;
+            color: #155724;
+            border-radius: 10px;
+        }
     </style>
 </head>
 
@@ -86,19 +106,55 @@
     <div class="container">
         <a href="index.php" class="btn-back">Back</a>
 
-        <form action="#" method="post">
+        <?php
+        if (isset($_SESSION['error'])) {
+        ?>
+            <div class="alert alert-warning" role="alert">
+                <?php echo $_SESSION['error'] ?>
+            </div>
+        <?php
+        }
+        ?>
+        <?php
+        if (isset($_SESSION['message'])) {
+        ?>
+            <div class="alert alert-success" role="alert">
+                <?php echo $_SESSION['message'] ?>
+            </div>
+        <?php
+        }
+        ?>
+
+        <form action="register_aksi.php" method="post">
             <h2>Register</h2>
             <div class="form-control">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
             </div>
             <div class="form-control">
+                <label for="nama_dpn">Nama Depan</label>
+                <input type="text" id="nama_dpn" name="nama_dpn" required>
+            </div>
+            <div class="form-control">
+                <label for="nama_belakang">Nama Belakang</label>
+                <input type="text" id="nama_belakang" name="nama_belakang" required>
+            </div>
+            <div class="form-control">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" required>
             </div>
             <div class="form-control">
+                <label for="birthday">Tanggal Lahir</label>
+                <input type="date" id="birthday" name="birthday" required>
+            </div>
+            <div class="form-control">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form-control">
+                <label for="password">Konfirmasi Password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" required>
             </div>
             <button type="submit" class="btn-register">Register</button>
         </form>

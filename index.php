@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Article Web</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
 </head>
@@ -15,7 +15,7 @@
 
         <div class="wrapper-navbar-left">
             <input type="text" placeholder="search.." class="search-input">
-            <i class="fas fa-user custom-icon-login" onmouseover="showLoginPage()" ondblclick="hideLoginPage()"></i>
+            <i class="fas fa-user custom-icon-login" onmouseover="showLoginPage()" onclick="showLoginPage()" ondblclick="hideLoginPage()"></i>
         </div>
     </div>
 
