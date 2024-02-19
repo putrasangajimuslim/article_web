@@ -1,5 +1,12 @@
 <?php
+require_once("config.php");
 session_start();
+$sql = "SELECT a.*, b.username as user_publish, b.nama_depan as nd, b.nama_belakang as nb FROM article a
+        JOIN users b ON a.user_id = b.id"; // Sesuaikan nama tabel dan kolom sesuai dengan struktur database Anda
+$stmt = $db->query($sql);
+
+// Memuat data artikel ke dalam array
+$articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -79,62 +86,23 @@ session_start();
         </div>
 
         <div class="container">
-            <div class="card">
-                <img src="https://via.placeholder.com/300" alt="Card Image">
-                <div class="card-content">
-                    <h2>Post Title 1</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.</p>
-                    <div class="publish-user">
-                        <img src="https://via.placeholder.com/300" alt="" style="margin-right: 10px;">
-                        <div class="user-profile">
-                            <p style="font-size:14px;">Ayunda Zikrina</p>
-                            <p style="font-size:10px;">Sept 15 2022</p>
+            <?php foreach ($articles as $article) : ?>
+                <div class="card">
+                    <!-- <img src="https://via.placeholder.com/300" alt="Card Image"> -->
+                    <img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Card Image">
+                    <div class="card-content">
+                        <h2><?php echo $article['title']; ?></h2>
+                        <p><?php echo $article['content']; ?></p>
+                        <div class="publish-user">
+                            <img src="https://via.placeholder.com/300" alt="" style="margin-right: 10px;">
+                            <div class="user-profile">
+                                <p style="font-size:14px;"><?php echo $article['user_publish'] == 'admin' ?  $article['user_publish'] : $article['nd'] . ' ' . $article['nb']; ?></p>
+                                <p style="font-size:10px;"><?php echo $article['published_date']; ?></p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="card">
-                <img src="https://via.placeholder.com/300" alt="Card Image">
-                <div class="card-content">
-                    <h2>Post Title 2</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.</p>
-                    <div class="publish-user">
-                        <img src="https://via.placeholder.com/300" alt="" style="margin-right: 10px;">
-                        <div class="user-profile">
-                            <p style="font-size:14px;">Ayunda Zikrina</p>
-                            <p style="font-size:10px;">Sept 15 2022</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <img src="https://via.placeholder.com/300" alt="Card Image">
-                <div class="card-content">
-                    <h2>Post Title 3</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.</p>
-                    <div class="publish-user">
-                        <img src="https://via.placeholder.com/300" alt="" style="margin-right: 10px;">
-                        <div class="user-profile">
-                            <p style="font-size:14px;">Ayunda Zikrina</p>
-                            <p style="font-size:10px;">Sept 15 2022</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <img src="https://via.placeholder.com/300" alt="Card Image">
-                <div class="card-content">
-                    <h2>Post Title 4</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.</p>
-                    <div class="publish-user">
-                        <img src="https://via.placeholder.com/300" alt="" style="margin-right: 10px;">
-                        <div class="user-profile">
-                            <p style="font-size:14px;">Ayunda Zikrina</p>
-                            <p style="font-size:10px;">Sept 15 2022</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 
