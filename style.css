@@ -371,3 +371,16 @@ table td {
   color: #155724;
   border-radius: 10px;
 }
+
+.clamp-line-options {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content-wrapper-detail-article {
+  max-width: 60%;
+  margin: 32px auto;
+}

@@ -81,7 +81,11 @@ if (isset($_SESSION['user'])) {
                     <tr data-id="<?php echo $article['id']; ?>">
                         <td><?php echo $i++; ?></td>
                         <td><?php echo $article['title']; ?></td>
-                        <td><?php echo $article['content']; ?></td>
+                        <td>
+                            <span class="clamp-line-options">
+                                <?php echo $article['content']; ?>
+                            </span>
+                        </td>
                         <td><img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Gambar" style="max-width: 100px;"></td>
                         <td><?php echo $article['published_date']; ?></td>
                         <td>

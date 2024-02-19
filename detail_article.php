@@ -1,9 +1,13 @@
 <?php
 require_once("config.php");
 session_start();
+$id = isset($_GET['id']) ? $_GET['id'] : null;
+
 $sql = "SELECT a.*, b.username as user_publish, b.nama_depan as nd, b.nama_belakang as nb FROM article a
-        JOIN users b ON a.user_id = b.id"; // Sesuaikan nama tabel dan kolom sesuai dengan struktur database Anda
-$stmt = $db->query($sql);
+        JOIN users b ON a.user_id = b.id WHERE a.id = :id"; // Sesuaikan nama tabel dan kolom sesuai dengan struktur database Anda
+$stmt = $db->prepare($sql);
+$stmt->bindParam(':id', $id);
+$stmt->execute();
 
 // Memuat data artikel ke dalam array
 $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -72,41 +76,23 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     ?>
 
-    <div class="content-wrapper">
-        <div class="d-flex-space-between">
-            <div class="section-label">
-                Featured Post
-            </div>
-            <div class="content-more">
-                <span>More</span>
-            </div>
-        </div>
-        <div class="border-separator">
-            <div class="blue-box"></div>
-        </div>
+    <div class="table-container">
+        <a href="index.php"><span>Home</span></a> <span style="margin-left: 8px; margin-right: 8px;">></span> <span>Detail Article</span>
+    </div>
 
+    <div class="content-wrapper-detail-article">
         <div class="container">
-            <?php foreach ($articles as $article) : ?>
-                <a href="detail_article.php?id=<?php echo $article['id']; ?>" style="text-decoration: none;">
-                    <div class="card">
-                        <!-- <img src="https://via.placeholder.com/300" alt="Card Image"> -->
-                        <img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Card Image">
-                        <div class="card-content">
-                            <h2><?php echo $article['title']; ?></h2>
-                            <span class="clamp-line-options">
-                                <?php echo $article['content']; ?>
-                            </span>
-                            <div class="publish-user">
-                                <img src="https://via.placeholder.com/300" alt="" style="margin-right: 10px;">
-                                <div class="user-profile">
-                                    <p style="font-size:14px;"><?php echo $article['user_publish'] == 'admin' ?  $article['user_publish'] : $article['nd'] . ' ' . $article['nb']; ?></p>
-                                    <p style="font-size:10px;"><?php echo $article['published_date']; ?></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            <?php endforeach; ?>
+            <?php $article = $articles[0]; ?>
+            <header>
+                <h1 style="text-align: center;"><?php echo $article['title']; ?></h1>
+                <p class="meta" style="text-align: center; margin-top: 10px;">Diposting pada <span class="date"><?php echo $article['published_date']; ?></span> oleh <span class="author"><?php echo $article['user_publish'] == 'admin' ?  $article['user_publish'] : $article['nd'] . ' ' . $article['nb']; ?></span></p>
+            </header>
+            <article>
+            <img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Gambar Berita" style="margin-top: 10px; margin-bottom: 10px;">
+            <p>
+                <?php echo $article['content']; ?>
+            </p>
+            </article>
         </div>
     </div>
 
