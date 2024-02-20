@@ -31,7 +31,7 @@ if (isset($_SESSION['user'])) {
 </head>
 
 <body>
-    <div class="navbar">
+    <div class="navbar-custom">
         <span class="text-logo">Admin Panel</span>
 
         <div class="wrapper-navbar-left">

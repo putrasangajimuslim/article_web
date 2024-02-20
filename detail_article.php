@@ -24,11 +24,11 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body>
-    <div class="navbar">
+    <div class="navbar-custom">
         <span class="text-logo">BLOGSPOT</span>
 
         <div class="wrapper-navbar-left">
-            <input type="text" placeholder="search.." class="search-input">
+            <!-- <input type="text" placeholder="search.." class="search-input"> -->
             <i class="fas fa-user custom-icon-login" onmouseover="showLoginPage()" onclick="showLoginPage()" ondblclick="hideLoginPage()"></i>
             <?php
             if (isset($_SESSION['user'])) {

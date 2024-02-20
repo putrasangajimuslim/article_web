@@ -17,14 +17,20 @@ if (isset($_SESSION['user'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Article Web</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!-- include summernote css/js -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 </head>
 
 <body>
-    <div class="navbar">
+    <div class="navbar-custom">
         <span class="text-logo">Admin Panel</span>
 
         <div class="wrapper-navbar-left">
@@ -105,6 +111,10 @@ if (isset($_SESSION['user'])) {
     </div>
 
     <script>
+        $(document).ready(function() {
+            $('#content').summernote();
+        });
+        
         function showLoginPage() {
             var loginPage = document.getElementById("loginPage");
             loginPage.style.display = "block";

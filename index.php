@@ -17,14 +17,15 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Article Web</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
-    <div class="navbar">
+    <div class="navbar-custom">
         <span class="text-logo">BLOGSPOT</span>
 
         <div class="wrapper-navbar-left">
-            <input type="text" placeholder="search.." class="search-input">
+            <!-- <input type="text" placeholder="search.." class="search-input" name="search" onchange="searchArticle()"> -->
             <i class="fas fa-user custom-icon-login" onmouseover="showLoginPage()" onclick="showLoginPage()" ondblclick="hideLoginPage()"></i>
             <?php
             if (isset($_SESSION['user'])) {
@@ -92,10 +93,14 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <!-- <img src="https://via.placeholder.com/300" alt="Card Image"> -->
                         <img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Card Image">
                         <div class="card-content">
-                            <h2><?php echo $article['title']; ?></h2>
-                            <span class="clamp-line-options">
-                                <?php echo $article['content']; ?>
-                            </span>
+                            <div class="wrapper-content">
+                                <?php echo $article['title']; ?>
+                                <div class="wrapper-clamp-line-options">
+                                    <div class="clamp-line-options">
+                                        <?php echo $article['content']; ?>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="publish-user">
                                 <img src="https://via.placeholder.com/300" alt="" style="margin-right: 10px;">
                                 <div class="user-profile">

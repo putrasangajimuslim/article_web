@@ -4,7 +4,7 @@
   font-family: Arial, sans-serif;
 }
 
-.navbar {
+.navbar-custom {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -189,11 +189,7 @@
 
 .card-content {
   padding: 20px;
-}
-
-.card-content h2 {
-  font-size: 20px;
-  margin-bottom: 10px;
+  height: auto;
 }
 
 .card-content p {
@@ -378,9 +374,14 @@ table td {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-top: 20px;
 }
 
 .content-wrapper-detail-article {
   max-width: 60%;
   margin: 32px auto;
+}
+
+.wrapper-clamp-line-options {
+  height: 47px;
 }
