@@ -124,12 +124,15 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
             <?php foreach ($articles as $article) : ?>
                 <a href="detail_article.php?id=<?php echo $article['id']; ?>" style="text-decoration: none;">
                     <div class="card">
-                        <img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Gambar" class="card-img">
+                        <!-- <img src="https://via.placeholder.com/300" alt="Card Image"> -->
+                        <img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Card Image">
                         <div class="card-content">
-                            <h2 class="card-title"><?php echo $article['title']; ?></h2>
-                            <div class="wrapper-clamp-line-options">
-                                <div class="clamp-line-options">
-                                    <?php echo $article['content']; ?>
+                            <div class="wrapper-content">
+                                <?php echo $article['title']; ?>
+                                <div class="wrapper-clamp-line-options">
+                                    <div class="clamp-line-options">
+                                        <?php echo $article['content']; ?>
+                                    </div>
                                 </div>
                             </div>
                             <div class="publish-user">
