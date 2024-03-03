@@ -28,7 +28,6 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <span class="text-logo">Admin Panel</span>
 
         <div class="wrapper-navbar-left">
-            <!-- <input type="text" placeholder="search.." class="search-input"> -->
             <i class="fas fa-user custom-icon-login" onmouseover="showLoginPage()" onclick="showLoginPage()" ondblclick="hideLoginPage()"></i>
             <?php
             if (isset($_SESSION['user'])) {
@@ -80,19 +79,18 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <a href="article.php"><span>Home</span></a> <span style="margin-left: 8px; margin-right: 8px;">></span> <span>Detail Article</span>
     </div>
 
-    <div class="content-wrapper-detail-article">
-        <div class="container">
+    <div class="article">
+        <div class="article-header">
             <?php $article = $articles[0]; ?>
-            <header>
-                <h1 style="text-align: center;"><?php echo $article['title']; ?></h1>
-                <p class="meta" style="text-align: center; margin-top: 10px;">Diposting pada <span class="date"><?php echo $article['published_date']; ?></span> oleh <span class="author"><?php echo $article['user_publish'] == 'admin' ?  $article['user_publish'] : $article['nd'] . ' ' . $article['nb']; ?></span></p>
-            </header>
-            <article>
-            <img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Gambar Berita" style="margin-top: 10px; margin-bottom: 10px;">
+
+            <h1><?php echo $article['title']; ?></h1>
+            <p style="margin-bottom: 14px;">Tanggal Publikasi: <?php echo $article['published_date']; ?></p>
+        </div>
+        <img src="assets/uploads/klinik-5.png" alt="Gambar Artikel" class="article-image">
+        <div class="article-content">
             <p>
                 <?php echo $article['content']; ?>
             </p>
-            </article>
         </div>
     </div>
 

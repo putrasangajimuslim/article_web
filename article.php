@@ -1,6 +1,19 @@
 <?php
 require_once("config.php");
 session_start();
+
+function cleanInput($input)
+{
+    $search = array(
+        '@<script[^>]*?>.*?</script>@si',   // Menghapus tag script
+        '@<[\/\!]*?[^<>]*?>@si',            // Menghapus tag HTML
+        '@<style[^>]*?>.*?</style>@siU',    // Menghapus tag style
+        '@<![\s\S]*?--[ \t\n\r]*>@'         // Menghapus komentar
+    );
+    $output = preg_replace($search, '', $input);
+    return $output;
+}
+
 if (isset($_SESSION['user'])) {
     $role = $_SESSION['user']['role'];
     if ($role != 'admin' && $role != 'writer') {
@@ -10,6 +23,21 @@ if (isset($_SESSION['user'])) {
 
     $userId = $_SESSION['user']['id'];
 
+    if (isset($_GET['search']) && !empty($_GET['search'])) {
+        $search = cleanInput($_GET['search']);
+
+        if ($role == 'admin') {
+            $sql = "SELECT * FROM article WHERE title LIKE :search OR content LIKE :search";
+            $stmt = $db->query($sql);
+            $stmt->execute(array(':search' => "%$search%"));
+        } else {
+            $sql = "SELECT * FROM article WHERE user_id = :id AND (title LIKE :search OR content LIKE :search)";
+            $stmt = $db->prepare($sql);
+            $stmt->bindParam(':id', $userId);
+            $stmt->execute(array(':search' => "%$search%"));
+        }
+    }
+    
     if ($role == 'admin') {
         $sql = "SELECT * FROM article";
         $stmt = $db->query($sql);
@@ -48,7 +76,14 @@ if (isset($_SESSION['user'])) {
         <?php } ?>
 
         <div class="wrapper-navbar-left">
-            <i class="fas fa-user custom-icon-login" onclick="showLoginPage()" onmouseover="showLoginPage()" ondblclick="hideLoginPage()"></i>
+            <form action="" method="GET"> <!-- Ganti action dengan kosong agar form submit ke halaman ini sendiri -->
+                <input type="text" placeholder="search.." class="search-input" name="search" value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>">
+                <button type="submit" class="btn-search"><i class="fas fa-search"></i></button> <!-- Tombol pencarian -->
+            </form>
+
+            <i class="fas fa-user custom-icon-login" onmouseover="showLoginPage()" onclick="showLoginPage()" ondblclick="hideLoginPage()"></i>
+
+            <!-- Sisipkan tombol login di sini -->
 
             <?php
             if (isset($_SESSION['user'])) {

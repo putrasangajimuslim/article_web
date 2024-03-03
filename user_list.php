@@ -35,7 +35,14 @@ if (isset($_SESSION['user'])) {
         <span class="text-logo">Admin Panel</span>
 
         <div class="wrapper-navbar-left">
-            <i class="fas fa-user custom-icon-login" onclick="showLoginPage()" onmouseover="showLoginPage()" ondblclick="hideLoginPage()"></i>
+            <form action="" method="GET"> <!-- Ganti action dengan kosong agar form submit ke halaman ini sendiri -->
+                <input type="text" placeholder="search.." class="search-input" name="search" value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>">
+                <button type="submit" class="btn-search"><i class="fas fa-search"></i></button> <!-- Tombol pencarian -->
+            </form>
+
+            <i class="fas fa-user custom-icon-login" onmouseover="showLoginPage()" onclick="showLoginPage()" ondblclick="hideLoginPage()"></i>
+
+            <!-- Sisipkan tombol login di sini -->
 
             <?php
             if (isset($_SESSION['user'])) {
