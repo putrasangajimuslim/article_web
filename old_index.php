@@ -15,17 +15,6 @@ function cleanInput($input)
     return $output;
 }
 
-$isActionArticle = false;
-
-if (isset($_SESSION['user'])) {
-    $role = $_SESSION['user']['role'];
-    if ($role == 'writer' || $role == 'admin') {
-        $isActionArticle = true;
-    } else {
-        
-    }
-}
-
 // Penanganan pencarian
 if (isset($_GET['search']) && !empty($_GET['search'])) {
     $search = cleanInput($_GET['search']);
@@ -107,16 +96,6 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
     ?>
 
     <?php
-    if (isset($_SESSION['error'])) {
-    ?>
-        <div class="alert-page" id="alertpage">
-            <div class="label-alert"> <?php echo $_SESSION['error'] ?></div>
-        </div>
-    <?php
-    }
-    ?>
-
-    <?php
     if (isset($_SESSION['user'])) {
     ?>
         <div class="logout-page" id="loginPage">
@@ -129,9 +108,6 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
     ?>
 
     <div class="content-wrapper">
-        <?php if ($isActionArticle) : ?>
-            <button class="btn-success mb-2" onclick="addForm()">Add Article</button>
-        <?php endif; ?>
         <div class="d-flex-space-between">
             <div class="section-label">
                 Featured Post
@@ -148,12 +124,15 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
             <?php foreach ($articles as $article) : ?>
                 <a href="detail_article.php?id=<?php echo $article['id']; ?>" style="text-decoration: none;">
                     <div class="card">
-                        <img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Gambar" class="card-img">
+                        <!-- <img src="https://via.placeholder.com/300" alt="Card Image"> -->
+                        <img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Card Image">
                         <div class="card-content">
-                            <h2 class="card-title"><?php echo $article['title']; ?></h2>
-                            <div class="wrapper-clamp-line-options">
-                                <div class="clamp-line-options">
-                                    <?php echo $article['content']; ?>
+                            <div class="wrapper-content">
+                                <?php echo $article['title']; ?>
+                                <div class="wrapper-clamp-line-options">
+                                    <div class="clamp-line-options">
+                                        <?php echo $article['content']; ?>
+                                    </div>
                                 </div>
                             </div>
                             <div class="publish-user">
@@ -172,39 +151,13 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 
     <script>
         function showLoginPage() {
-            $.ajax({
-                url: "hapus_session_alert.php",
-                type: 'GET',
-                success: function(res) {
-                    if (res == 'success') {
-                        var loginPage = document.getElementById("loginPage");
-                        loginPage.style.display = "block";
-
-                        var alertpage = document.getElementById("alertpage");
-                        alertpage.style.display = "none";
-                    }
-                }
-            });
+            var loginPage = document.getElementById("loginPage");
+            loginPage.style.display = "block";
         }
 
         function hideLoginPage() {
-            $.ajax({
-                url: "hapus_session_alert.php",
-                type: 'GET',
-                success: function(res) {
-                    if (res == 'success') {
-                        var loginPage = document.getElementById("loginPage");
-                        loginPage.style.display = "none";
-
-                        var alertpage = document.getElementById("alertpage");
-                        alertpage.style.display = "none";
-                    }
-                }
-            });
-        }
-
-        function addForm() {
-            window.location.href = 'tambah_article.php';
+            var loginPage = document.getElementById("loginPage");
+            loginPage.style.display = "none";
         }
     </script>
 </body>
