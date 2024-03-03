@@ -3,25 +3,16 @@ require_once("config.php");
 session_start();
 if (isset($_SESSION['user'])) {
     $role = $_SESSION['user']['role'];
-    if ($role != 'admin' && $role != 'writer') {
+    if ($role != 'admin') {
         header("Location: index.php"); // Misalnya, alihkan ke halaman login
         exit;
     }
 
-    $userId = $_SESSION['user']['id'];
-
-    if ($role == 'admin') {
-        $sql = "SELECT * FROM article";
-        $stmt = $db->query($sql);
-    } else {
-        $sql = "SELECT * FROM article WHERE user_id = :id";
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam(':id', $userId);
-        $stmt->execute();
-    }
+    $sql = "SELECT * FROM users";
+    $stmt = $db->query($sql);
 
     // Memuat data artikel ke dalam array
-    $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } else {
     header("Location: index.php"); // Misalnya, alihkan ke halaman login
     exit;
@@ -41,11 +32,7 @@ if (isset($_SESSION['user'])) {
 
 <body>
     <div class="navbar-custom">
-        <?php if ($role == 'admin') { ?>
-            <span class="text-logo">Admin Panel</span>
-        <?php } else if ($role == 'writer') { ?>
-            <span class="text-logo">BLOGSPOT</span>
-        <?php } ?>
+        <span class="text-logo">Admin Panel</span>
 
         <div class="wrapper-navbar-left">
             <i class="fas fa-user custom-icon-login" onclick="showLoginPage()" onmouseover="showLoginPage()" ondblclick="hideLoginPage()"></i>
@@ -66,24 +53,21 @@ if (isset($_SESSION['user'])) {
     if (isset($_SESSION['user'])) {
     ?>
         <div class="logout-page" id="loginPage">
-            <?php if ($role == 'admin') { ?>
-                <div style="margin-bottom: 10px;">
-                    <a href="dashboard.php" class="label-logout">
-                        Dashboard
-                    </a>
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <a href="user_list.php" class="label-logout">
-                        Users
-                    </a>
-                </div>
-
-                <div style="margin-bottom: 10px;">
-                    <a href="article.php" class="label-logout">
-                        Article
-                    </a>
-                </div>
-            <?php } ?>
+            <div style="margin-bottom: 10px;">
+                <a href="dashboard.php" class="label-logout">
+                    Dashboard
+                </a>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <a href="user_list.php" class="label-logout">
+                    Users
+                </a>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <a href="article.php" class="label-logout">
+                    Article
+                </a>
+            </div>
 
             <div>
                 <a href="logout.php" class="label-logout">
@@ -96,7 +80,7 @@ if (isset($_SESSION['user'])) {
     ?>
 
     <div class="table-container">
-        <span>Article List</span>
+        <span>Users List</span>
     </div>
 
     <div class="table-container">
@@ -106,29 +90,28 @@ if (isset($_SESSION['user'])) {
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Title</th>
-                    <th>Content</th>
-                    <th>Image</th>
-                    <th>Publish Date</th>
+                    <th>Username</th>
+                    <th>Nama Depan</th>
+                    <th>Nama Belakang</th>
+                    <th>Birthday</th>
+                    <th>Email</th>
+                    <th>Role</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 <?php $i = 1; ?>
-                <?php foreach ($articles as $article) : ?>
-                    <tr data-id="<?php echo $article['id']; ?>">
+                <?php foreach ($users as $users) : ?>
+                    <tr data-id="<?php echo $users['id']; ?>">
                         <td><?php echo $i++; ?></td>
-                        <td><?php echo $article['title']; ?></td>
+                        <td><?php echo $users['username']; ?></td>
+                        <td><?php echo $users['nama_depan']; ?></td>
+                        <td><?php echo $users['nama_belakang']; ?></td>
+                        <td><?php echo $users['birthday']; ?></td>
+                        <td><?php echo $users['email']; ?></td>
+                        <td><?php echo $users['role']; ?></td>
                         <td>
-                            <span class="clamp-line-options">
-                                <?php echo $article['content']; ?>
-                            </span>
-                        </td>
-                        <td><img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Gambar" style="max-width: 100px;"></td>
-                        <td><?php echo $article['published_date']; ?></td>
-                        <td>
-                            <a href="edit_article.php?id=<?php echo $article['id']; ?>" class="edit-btn"><i class="fas fa-edit"></i></a>
-                            <a href="view_article.php?id=<?php echo $article['id']; ?>" class="edit-btn"><i class="fas fa-eye"></i></a>
+                            <a href="edit_user.php?id=<?php echo $users['id']; ?>" class="edit-btn"><i class="fas fa-edit"></i></a>
                             <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>
@@ -145,7 +128,7 @@ if (isset($_SESSION['user'])) {
                 // Simpan referensi tombol hapus yang diklik
                 var deleteButton = $(this);
 
-                var articleId = $(this).closest('tr').data('id');
+                var userid = $(this).closest('tr').data('id');
                 // Tampilkan dialog konfirmasi
                 if (confirm('Apakah Anda yakin ingin menghapus item ini?')) {
                     // Jika pengguna mengonfirmasi, lakukan tindakan hapus
@@ -153,11 +136,11 @@ if (isset($_SESSION['user'])) {
                     // Misalnya, dengan menggunakan $.ajax() atau $.post()
                     // Di sini saya hanya menambahkan log ke konsol
                     $.ajax({
-                        url: 'delete_article.php',
+                        url: 'delete_user.php',
                         type: 'POST',
                         dataType: 'json',
                         data: {
-                            article_id: articleId
+                            user_id: userid
                         },
                         success: function(response) {
                             if (response.success) {
@@ -193,7 +176,7 @@ if (isset($_SESSION['user'])) {
         }
 
         function addForm() {
-            window.location.href = 'tambah_article.php';
+            window.location.href = 'tambah_user.php';
         }
     </script>
 </body>

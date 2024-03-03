@@ -1,18 +1,18 @@
 <?php
 require_once("config.php");
 session_start();
-
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validasi jika password & password_confirmation sama
-    if ($_POST['password'] != $_POST['password_confirmation']) {
-        $_SESSION['error'] = 'Password yang Anda masukkan tidak sama dengan konfirmasi password.';
-        header("Location: register.php");
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    if ($password !== $confirm_password) {
+        $_SESSION['error'] =  "Gagal menyimpan password dan konfirmasi password tidak sesuai.";
+        header("Location: tambah_user.php");
         return;
         exit();
     }
 
-    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+    $newpassword = password_hash($password, PASSWORD_DEFAULT);
 
     $sql_check = "SELECT COUNT(*) AS count FROM users WHERE username = :username OR email = :email";
     $stmt_check = $db->prepare($sql_check);
@@ -29,17 +29,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit; // Pastikan untuk menghentikan eksekusi skrip setelah redirect
     } else {
         $sql = "INSERT INTO users (username, nama_depan, nama_belakang, birthday, email, role, password) 
-                VALUES (:username, :nama_depan, :nama_belakang, :birthday, :email, :role, :password)";
+        VALUES (:username, :nama_depan, :nama_belakang, :birthday, :email, :role, :password)";
         $stmt = $db->prepare($sql);
 
         $params = array(
             ":username" => $_POST["username"],
-            ":nama_depan" => $_POST["nama_dpn"],
-            ":nama_belakang" => $_POST["nama_belakang"],
+            ":nama_depan" => $_POST["nama_d"],
+            ":nama_belakang" => $_POST["nama_b"],
             ":email" => $_POST['email'],
             ":birthday" => $_POST['birthday'],
             ":role" => $_POST['user_role'],
-            ":password" => $password
+            ":password" => $newpassword
         );
 
         // eksekusi query untuk menyimpan ke database
@@ -47,7 +47,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // jika query simpan berhasil, maka user sudah terdaftar
         // maka alihkan ke halaman login
-        if ($saved) $_SESSION['message'] = "Berhasil Register";
-        if ($saved) header("Location: register.php");
+        if ($saved) {
+            $_SESSION['message'] = "Berhasil membuat user baru";
+            header("Location: tambah_user.php");
+            exit(); // Pastikan Anda keluar setelah mengalihkan
+        } else {
+            // Jika terjadi kesalahan saat mengeksekusi query
+            $_SESSION['error'] =  "Gagal menyimpan user baru ke database.";
+            header("Location: tambah_user.php");
+            exit();
+        }
     }
 }

@@ -2,7 +2,7 @@
 session_start();
 if (isset($_SESSION['user'])) {
     $role = $_SESSION['user']['role'];
-    if ($role != 'admin' && $role != 'writer') {
+    if ($role != 'admin') {
         header("Location: index.php"); // Misalnya, alihkan ke halaman login
         exit;
     }
@@ -31,11 +31,7 @@ if (isset($_SESSION['user'])) {
 
 <body>
     <div class="navbar-custom">
-        <?php if ($role == 'admin') { ?>
-            <span class="text-logo">Admin Panel</span>
-        <?php } else { ?>
-            <span class="text-logo">BLOGSPOT</span>
-        <?php } ?>
+        <span class="text-logo">Admin Panel</span>
 
         <div class="wrapper-navbar-left">
             <i class="fas fa-user custom-icon-login" onclick="showLoginPage()" onmouseover="showLoginPage()" ondblclick="hideLoginPage()"></i>
@@ -65,11 +61,7 @@ if (isset($_SESSION['user'])) {
     ?>
 
     <div class="table-container">
-        <a href="article.php">
-            <span>Article list</span>
-        </a>
-        <span style="margin-left: 8px; margin-right: 8px;">></span>
-        <span>Form Tambah Article</span>
+        <a href="user_list.php"><span>Home</span></a> <span style="margin-left: 8px; margin-right: 8px;">></span> <span>Form Tambah Users</span>
     </div>
 
     <div class="container-article">
@@ -94,22 +86,49 @@ if (isset($_SESSION['user'])) {
         }
         ?>
 
-        <form action="tambah_article_aksi.php" method="post" class="add-form" enctype="multipart/form-data">
+        <form action="tambah_user_aksi.php" method="post" class="add-form" enctype="multipart/form-data">
             <div class="form-control-custom">
-                <label for="title">Title</label>
-                <input type="text" id="title" name="title" required>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
             </div>
+
             <div class="form-control-custom">
-                <label for="content">Content</label>
-                <textarea name="content" id="content" cols="20" rows="20"></textarea>
+                <label for="nama_d">Nama Depan</label>
+                <input type="text" id="nama_d" name="nama_d" required>
             </div>
+
             <div class="form-control-custom">
-                <label for="imageUpload">Pilih Gambar:</label>
-                <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
+                <label for="nama_b">Nama Belakang</label>
+                <input type="text" id="nama_b" name="nama_b" required>
             </div>
+
             <div class="form-control-custom">
-                <label for="publish_date">Publis Date</label>
-                <input type="date" id="publish_date" name="publish_date" required>
+                <label for="birthday">Birthday</label>
+                <input type="date" id="birthday" name="birthday" required>
+            </div>
+
+            <div class="form-control-custom">
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" required>
+            </div>
+
+            <div class="form-control-custom">
+                <select name="user_role" id="user_role">
+                    <option value="">-- Silahkan Pilih Role --</option>
+                    <option value="admin">Admin</option>
+                    <option value="user">user</option>
+                    <option value="writer">Writer</option>
+                </select>
+            </div>
+
+            <div class="form-control-custom">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form-control-custom">
+                <label for="confirm_password">Konfirmasi Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
             </div>
             <button type="submit" class="btn btn-save">Simpan</button>
         </form>
@@ -119,10 +138,6 @@ if (isset($_SESSION['user'])) {
     </div>
 
     <script>
-        $(document).ready(function() {
-            $('#content').summernote();
-        });
-
         function showLoginPage() {
             var loginPage = document.getElementById("loginPage");
             loginPage.style.display = "block";
@@ -139,7 +154,7 @@ if (isset($_SESSION['user'])) {
                 type: 'GET',
                 success: function(res) {
                     if (res == 'success') {
-                        window.location.href = "article.php";
+                        window.location.href = "user_list.php";
                     }
                 }
             });

@@ -49,7 +49,8 @@ session_start();
         input[type="text"],
         input[type="email"],
         input[type="password"],
-        input[type="date"] {
+        input[type="date"],
+        select {
             width: 100%;
             height: 35px;
             border: 1px solid #ccc;
@@ -149,10 +150,17 @@ session_start();
                 <input type="date" id="birthday" name="birthday" required>
             </div>
             <div class="form-control">
+                <label for="birthday">Role</label>
+                <select name="user_role" id="user_role">
+                    <option value="">-- Silahkan Pilih Role --</option>
+                    <option value="user">user</option>
+                    <option value="writer">Writer</option>
+                </select>
+            </div>
+            <div class="form-control">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-
             <div class="form-control">
                 <label for="password">Konfirmasi Password</label>
                 <input type="password" id="password_confirmation" name="password_confirmation" required>

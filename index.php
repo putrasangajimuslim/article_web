@@ -7,6 +7,16 @@ $stmt = $db->query($sql);
 
 // Memuat data artikel ke dalam array
 $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$isActionArticle = false;
+
+if (isset($_SESSION['user'])) {
+    $role = $_SESSION['user']['role'];
+
+    if ($role == 'writer' || $role == 'admin') {
+        $isActionArticle = true;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,6 +72,16 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     ?>
 
     <?php
+    if (isset($_SESSION['error'])) {
+    ?>
+        <div class="alert-page" id="alertpage">
+            <div class="label-alert"> <?php echo $_SESSION['error'] ?></div>
+        </div>
+    <?php
+    }
+    ?>
+
+    <?php
     if (isset($_SESSION['user'])) {
     ?>
         <div class="logout-page" id="loginPage">
@@ -74,6 +94,9 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     ?>
 
     <div class="content-wrapper">
+        <?php if ($isActionArticle) : ?>
+            <button class="btn-success mb-2" onclick="addForm()">Add Article</button>
+        <?php endif; ?>
         <div class="d-flex-space-between">
             <div class="section-label">
                 Featured Post
@@ -117,13 +140,39 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script>
         function showLoginPage() {
-            var loginPage = document.getElementById("loginPage");
-            loginPage.style.display = "block";
+            $.ajax({
+                url: "hapus_session_alert.php",
+                type: 'GET',
+                success: function(res) {
+                    if (res == 'success') {
+                        var loginPage = document.getElementById("loginPage");
+                        loginPage.style.display = "block";
+
+                        var alertpage = document.getElementById("alertpage");
+                        alertpage.style.display = "none";
+                    }
+                }
+            });
         }
 
         function hideLoginPage() {
-            var loginPage = document.getElementById("loginPage");
-            loginPage.style.display = "none";
+            $.ajax({
+                url: "hapus_session_alert.php",
+                type: 'GET',
+                success: function(res) {
+                    if (res == 'success') {
+                        var loginPage = document.getElementById("loginPage");
+                        loginPage.style.display = "none";
+
+                        var alertpage = document.getElementById("alertpage");
+                        alertpage.style.display = "none";
+                    }
+                }
+            });
+        }
+
+        function addForm() {
+            window.location.href = 'tambah_article.php';
         }
     </script>
 </body>
