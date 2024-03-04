@@ -4,6 +4,7 @@ session_start();
 
 function cleanInput($input)
 {
+    // Membersihkan input dari skrip berbahaya
     $search = array(
         '@<script[^>]*?>.*?</script>@si',   // Menghapus tag script
         '@<[\/\!]*?[^<>]*?>@si',            // Menghapus tag HTML
@@ -16,45 +17,50 @@ function cleanInput($input)
 
 if (isset($_SESSION['user'])) {
     $role = $_SESSION['user']['role'];
+
+    // Periksa apakah peran pengguna adalah admin atau penulis
     if ($role != 'admin' && $role != 'writer') {
-        header("Location: index.php"); // Misalnya, alihkan ke halaman login
+        header("Location: index.php"); // Redirect ke halaman login jika bukan admin atau penulis
         exit;
     }
 
     $userId = $_SESSION['user']['id'];
 
+    // Periksa apakah parameter 'search' telah diset dan tidak kosong
     if (isset($_GET['search']) && !empty($_GET['search'])) {
         $search = cleanInput($_GET['search']);
 
+        // Bangun kueri berdasarkan peran pengguna
         if ($role == 'admin') {
             $sql = "SELECT * FROM article WHERE title LIKE :search OR content LIKE :search";
-            $stmt = $db->query($sql);
+            $stmt = $db->prepare($sql);
             $stmt->execute(array(':search' => "%$search%"));
         } else {
             $sql = "SELECT * FROM article WHERE user_id = :id AND (title LIKE :search OR content LIKE :search)";
             $stmt = $db->prepare($sql);
-            $stmt->bindParam(':id', $userId);
-            $stmt->execute(array(':search' => "%$search%"));
+            $stmt->execute(array(':id' => $userId, ':search' => "%$search%"));
         }
-    }
-    
-    if ($role == 'admin') {
-        $sql = "SELECT * FROM article";
-        $stmt = $db->query($sql);
     } else {
-        $sql = "SELECT * FROM article WHERE user_id = :id";
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam(':id', $userId);
-        $stmt->execute();
+        // Jika tidak ada parameter pencarian, ambil semua artikel berdasarkan peran pengguna
+        if ($role == 'admin') {
+            $sql = "SELECT * FROM article";
+            $stmt = $db->query($sql);
+        } else {
+            $sql = "SELECT * FROM article WHERE user_id = :id";
+            $stmt = $db->prepare($sql);
+            $stmt->execute(array(':id' => $userId));
+        }
     }
 
     // Memuat data artikel ke dalam array
     $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } else {
-    header("Location: index.php"); // Misalnya, alihkan ke halaman login
+    // Redirect ke halaman login jika tidak ada pengguna yang masuk
+    header("Location: index.php");
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 

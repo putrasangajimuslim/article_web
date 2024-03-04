@@ -1,6 +1,20 @@
 <?php
 require_once("config.php");
 session_start();
+
+function cleanInput($input)
+{
+    // Membersihkan input dari skrip berbahaya
+    $search = array(
+        '@<script[^>]*?>.*?</script>@si',   // Menghapus tag script
+        '@<[\/\!]*?[^<>]*?>@si',            // Menghapus tag HTML
+        '@<style[^>]*?>.*?</style>@siU',    // Menghapus tag style
+        '@<![\s\S]*?--[ \t\n\r]*>@'         // Menghapus komentar
+    );
+    $output = preg_replace($search, '', $input);
+    return $output;
+}
+
 if (isset($_SESSION['user'])) {
     $role = $_SESSION['user']['role'];
     if ($role != 'admin') {
@@ -8,10 +22,18 @@ if (isset($_SESSION['user'])) {
         exit;
     }
 
-    $sql = "SELECT * FROM users";
-    $stmt = $db->query($sql);
+    // Periksa apakah parameter 'search' telah diset dan tidak kosong
+    if (isset($_GET['search']) && !empty($_GET['search'])) {
+        $search = cleanInput($_GET['search']);
 
-    // Memuat data artikel ke dalam array
+        $sql = "SELECT * FROM users WHERE username LIKE :search OR email LIKE :search";
+        $stmt = $db->prepare($sql);
+        $stmt->execute(array(':search' => "%$search%"));
+    } else {
+        $sql = "SELECT * FROM users";
+        $stmt = $db->query($sql);
+    }
+
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } else {
     header("Location: index.php"); // Misalnya, alihkan ke halaman login
