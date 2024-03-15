@@ -16,13 +16,13 @@ function cleanInput($input)
 }
 
 $isActionArticle = false;
+$userLoginId = '';
 
 if (isset($_SESSION['user'])) {
     $role = $_SESSION['user']['role'];
+    $userLoginId = $_SESSION['user']['id'];
     if ($role == 'writer' || $role == 'admin') {
         $isActionArticle = true;
-    } else {
-        
     }
 }
 
@@ -30,7 +30,11 @@ if (isset($_SESSION['user'])) {
 if (isset($_GET['search']) && !empty($_GET['search'])) {
     $search = cleanInput($_GET['search']);
     // Sesuaikan query SQL untuk melakukan pencarian
-    $sql = "SELECT a.*, b.username as user_publish, b.nama_depan as nd, b.nama_belakang as nb 
+    $sql = "SELECT a.*, 
+                b.username as user_publish, 
+                b.nama_depan as nd, 
+                b.nama_belakang as nb,
+                (SELECT COUNT(*) FROM likes WHERE article_id = a.id) as total_likes 
             FROM article a
             JOIN users b ON a.user_id = b.id
             WHERE a.title LIKE :search OR a.content LIKE :search"; // Sesuaikan dengan kolom yang ingin dicari
@@ -38,11 +42,33 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
     $stmt->execute(array(':search' => "%$search%"));
     $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } else {
-    // Jika tidak ada pencarian, tampilkan semua artikel seperti sebelumnya
-    $sql = "SELECT a.*, b.username as user_publish, b.nama_depan as nd, b.nama_belakang as nb FROM article a
-            JOIN users b ON a.user_id = b.id";
-    $stmt = $db->query($sql);
+    if (!empty($userLoginId)) { // Check if $userLoginId is not an empty string
+        $sql = "SELECT a.*, 
+                b.username as user_publish, 
+                b.nama_depan as nd, 
+                b.nama_belakang as nb,
+                l.user_id as user_like_id,
+                (SELECT COUNT(*) FROM likes WHERE article_id = a.id) as total_likes
+        FROM article a
+        JOIN users b ON a.user_id = b.id
+        LEFT JOIN likes l ON a.id = l.article_id AND l.user_id = :user_id";
+        $stmt = $db->prepare($sql);
+        $stmt->execute(array(':user_id' => $userLoginId));
+    } else {
+        $sql = "SELECT a.*, 
+                b.username as user_publish, 
+                b.nama_depan as nd, 
+                b.nama_belakang as nb,
+                (SELECT COUNT(*) FROM likes WHERE article_id = a.id) as total_likes 
+        FROM article a
+        JOIN users b ON a.user_id = b.id";
+        $stmt = $db->query($sql);
+    }
+
     $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // var_dump($articles);
+    // exit;
 }
 ?>
 
@@ -146,6 +172,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 
         <div class="container">
             <?php foreach ($articles as $article) : ?>
+                <div id="article_id" data-id="<?php echo $article['id']; ?>" style="display:none;"></div>
                 <a href="detail_article.php?id=<?php echo $article['id']; ?>" style="text-decoration: none;">
                     <div class="card">
                         <img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Gambar" class="card-img">
@@ -163,6 +190,28 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                                     <p style="font-size:10px;"><?php echo $article['published_date']; ?></p>
                                 </div>
                             </div>
+                            <div style="cursor: pointer;" class="container-likes">
+                                <div style="display: flex; text-align:center;">
+
+                                    <?php if ($userLoginId) : ?>
+                                        <?php if ($article['user_like_id'] == $userLoginId) : ?>
+                                            <img src="assets/images/love-red.png" alt="" width="20" style="margin-right: 8px; display:block;" class="liked-love" onclick="unlikePost()">
+                                            <img src="assets/images/like.jpg" alt="" width="20" style="margin-right: 8px; display:none;" class="liked" onclick="likePost()">
+                                        <?php else : ?>
+                                            <img src="assets/images/love-red.png" alt="" width="20" style="margin-right: 8px; display:none;" class="liked-love" onclick="unlikePost()">
+                                            <img src="assets/images/like.jpg" alt="" width="20" style="margin-right: 8px; display:block;" class="liked" onclick="likePost()">
+                                        <?php endif; ?>
+                                    <?php else : ?>
+                                        <img src="assets/images/like.jpg" alt="" width="20" style="margin-right: 8px; display:block;" class="liked" onclick="likePost()">
+                                    <?php endif; ?>
+
+                                    <!-- <img src="assets/images/love-red.png" alt="" width="20" style="margin-right: 8px;" class="liked-love" onclick="unlikePost()"> -->
+                                    <!-- <img src="assets/images/like.jpg" alt="" width="20" style="margin-right: 8px;" class="liked" onclick="likePost()"> -->
+                                    <?php if ($article['total_likes'] > 0) : ?>
+                                        <span class="total-likes-sp"><?php echo $article['total_likes']; ?></span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </a>
@@ -171,6 +220,9 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
     </div>
 
     <script>
+        var liked = document.getElementsByClassName("liked")[0];
+        var likedLove = document.getElementsByClassName("liked-love")[0];
+
         function showLoginPage() {
             $.ajax({
                 url: "hapus_session_alert.php",
@@ -181,10 +233,62 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                         loginPage.style.display = "block";
 
                         var alertpage = document.getElementById("alertpage");
-                        alertpage.style.display = "none";
+                        if (alertpage){
+                            alertpage.style.display = "none";
+                        }
                     }
                 }
             });
+        }
+
+        function likePost() {
+
+            var article_id = document.getElementById("article_id").getAttribute("data-id");
+
+            $.ajax({
+                url: "liked_article.php",
+                type: 'GET',
+                data: { // Data yang ingin Anda kirim
+                    article_id: article_id
+                },
+                success: function(res) {
+                    if (res == 'error') {
+                        alert('silahkan login terlebih dahulu');
+                    } else {
+                        if (liked.style.display !== "none") {
+                            liked.style.display = "none";
+                            likedLove.style.display = "block"; // Menampilkan gambar yang disukai
+                        } else {
+                            liked.style.display = "block"; // Menampilkan gambar yang disukai
+                            likedLove.style.display = "none";
+                        }
+                    }
+
+                }
+            });
+        }
+
+        function unlikePost() {
+            var article_id = document.getElementById("article_id").getAttribute("data-id");
+
+            if (liked.style.display === "nonne") {
+                liked.style.display = "none";
+                likedLove.style.display = "block";
+            } else {
+                liked.style.display = "block";
+                likedLove.style.display = "none";
+
+                $.ajax({
+                    url: "unliked_article.php",
+                    type: 'GET',
+                    data: { // Data yang ingin Anda kirim
+                        article_id: article_id
+                    },
+                    success: function(res) {
+
+                    }
+                });
+            }
         }
 
         function hideLoginPage() {
@@ -197,7 +301,10 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                         loginPage.style.display = "none";
 
                         var alertpage = document.getElementById("alertpage");
-                        alertpage.style.display = "none";
+
+                        if (alertpage) {
+                            alertpage.style.display = "none";
+                        }
                     }
                 }
             });

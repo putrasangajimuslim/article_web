@@ -1,11 +1,18 @@
 <?php
 session_start();
+require_once("config.php");
+
 if (isset($_SESSION['user'])) {
     $role = $_SESSION['user']['role'];
     if ($role != 'admin' && $role != 'writer') {
         header("Location: index.php"); // Misalnya, alihkan ke halaman login
         exit;
     }
+
+    $sql = "SELECT * FROM kategori";
+    $stmt = $db->query($sql);
+
+    $kategories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } else {
     header("Location: index.php"); // Misalnya, alihkan ke halaman login
     exit;
@@ -110,6 +117,16 @@ if (isset($_SESSION['user'])) {
             <div class="form-control-custom">
                 <label for="publish_date">Publis Date</label>
                 <input type="date" id="publish_date" name="publish_date" required>
+            </div>
+
+            <div class="form-control-custom">
+                <label for="kategori_id">Kategori</label>
+                <select name="kategori_id" id="kategori_id">
+                    <option value="">-- Pilih Jenis Kategori --</option>
+                    <?php foreach($kategories as $kategori) { ?>
+                        <option value="<?php echo $kategori['id'] ?>"><?php echo $kategori['name'] ?></option>
+                    <?php } ?>
+                </select>
             </div>
             <button type="submit" class="btn btn-save">Simpan</button>
         </form>

@@ -10,11 +10,18 @@ if (isset($_SESSION['user'])) {
 
     $sqlUsers = "SELECT COUNT(*) AS jumlah_user FROM users";
     $sqlArticle = "SELECT COUNT(*) AS jumlah_article FROM article";
-    
+
+    $sqlCategory = "SELECT kategori.id, kategori.name, COUNT(article.kategori_id) AS total_artikel
+                    FROM kategori
+                    LEFT JOIN article ON kategori.id = article.kategori_id
+                    GROUP BY kategori.id, kategori.name";
+        
     // Menyiapkan statement untuk pengguna
     $stmtUsers = $db->prepare($sqlUsers);
     // Menyiapkan statement untuk artikel
     $stmtArticles = $db->prepare($sqlArticle);
+
+    $stmt = $db->prepare($sqlCategory);
     
     // Mengeksekusi statement untuk pengguna
     $stmtUsers->execute();
@@ -25,10 +32,16 @@ if (isset($_SESSION['user'])) {
     $resultUsers = $stmtUsers->fetch(PDO::FETCH_ASSOC);
     // Mengambil hasil untuk artikel
     $resultArticles = $stmtArticles->fetch(PDO::FETCH_ASSOC);
+
+    $stmt->execute();
+
+    $kategories = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // Anda dapat mengakses jumlah pengguna dan artikel sebagai berikut
     $jmlUser = $resultUsers['jumlah_user'];
     $jmlArticle = $resultArticles['jumlah_article'];
+
+    // var_dump($kategories); exit;
 
 } else {
     header("Location: index.php"); // Misalnya, alihkan ke halaman login
@@ -116,6 +129,26 @@ if (isset($_SESSION['user'])) {
                 <a href="user_list.php" class="btn">View Details</a>
             </div>
         </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name Category</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $i = 1; ?>
+                <?php foreach ($kategories as $kategory) : ?>
+                    <tr>
+                        <td><?php echo $i++; ?></td>
+                        <td><?php echo $kategory['name']; ?></td>
+                        <td><?php echo $kategory['total_artikel']; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
 
 

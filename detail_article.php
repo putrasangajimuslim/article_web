@@ -86,7 +86,7 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <h1><?php echo $article['title']; ?></h1>
             <p style="margin-bottom: 14px;">Tanggal Publikasi: <?php echo $article['published_date']; ?></p>
         </div>
-        <img src="assets/uploads/klinik-5.png" alt="Gambar Artikel" class="article-image">
+        <img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Gambar Artikel" class="article-image">
         <div class="article-content">
             <p>
                 <?php echo $article['content']; ?>

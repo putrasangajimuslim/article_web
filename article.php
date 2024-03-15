@@ -151,6 +151,7 @@ if (isset($_SESSION['user'])) {
                     <th>Content</th>
                     <th>Image</th>
                     <th>Publish Date</th>
+                    <th>Jumlah Like</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -167,6 +168,9 @@ if (isset($_SESSION['user'])) {
                         </td>
                         <td><img src="assets/uploads/<?php echo $article['img_content']; ?>" alt="Gambar" style="max-width: 100px;"></td>
                         <td><?php echo $article['published_date']; ?></td>
+                        <td>
+                            
+                        </td>
                         <td>
                             <a href="edit_article.php?id=<?php echo $article['id']; ?>" class="edit-btn"><i class="fas fa-edit"></i></a>
                             <a href="view_article.php?id=<?php echo $article['id']; ?>" class="edit-btn"><i class="fas fa-eye"></i></a>

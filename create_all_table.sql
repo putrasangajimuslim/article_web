@@ -18,5 +18,22 @@ CREATE TABLE article (
     content TEXT NOT NULL,
     img_content VARCHAR(255) NOT NULL,
     published_date DATE,
-    user_id INT
+    user_id INT,
+    kategori_id INT,
+    FOREIGN KEY (kategori_id) REFERENCES kategori(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE kategori (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE likes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    article_id INT,
+    user_id INT,
+    jml_like BIGINT DEFAULT 0,
+    FOREIGN KEY (article_id) REFERENCES article(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );

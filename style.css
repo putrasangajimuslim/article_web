@@ -232,6 +232,11 @@
   padding: 10px;
 }
 
+.container-likes {
+  display: flex;
+  justify-content: end;
+}
+
 .publish-user img {
   width: 30px;
   border-radius: 100%;

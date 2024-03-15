@@ -30,16 +30,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["imageUpload"])) {
     ) {
         $_SESSION['error'] = "Maaf, hanya file JPG, JPEG, PNG & GIF yang diizinkan.";
         $uploadOk = 0;
+        header("Location: tambah_article.php");
+        return;
+        exit();
     }
 
     // Cek jika $uploadOk bernilai 0
-    if ($uploadOk == 0) {
-        $_SESSION['error'] = "Maaf, file tidak diunggah.";
-    } else { // Jika semuanya baik-baik, coba unggah file
+    if ($uploadOk != 0) {  // Jika semuanya baik-baik, coba unggah file
         if (move_uploaded_file($_FILES["imageUpload"]["tmp_name"], $target_file)) {
             $_SESSION['message'] =  "File " . htmlspecialchars(basename($_FILES["imageUpload"]["name"])) . " berhasil diunggah.";
         } else {
             $_SESSION['error'] = "Maaf, terjadi kesalahan saat mengunggah file.";
+            header("Location: tambah_article.php");
+            return;
+            exit();
         }
     }
 
